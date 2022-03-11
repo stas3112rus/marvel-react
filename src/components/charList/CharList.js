@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 import PropTypes from 'prop-types';
 import MarvelService from '../../services/MarvelService';
@@ -7,72 +7,24 @@ import ErrorMessage from '../errrorMessage/ErrorMessage';
 import './charList.scss';
 
 
-class CharList extends Component {
+const CharList = (props) =>{
+
+    const [persons, setPerons] = useState([]);
+    const [newPersonLoading, setNewPersonLoading] = useState(false);
+    const [offset, setOffset] = useState(210);
+    const [charEnded, setCharEnded] = useState(false);
     
-    state = {
-        persons: [],
-        newPersonLoading: false,
-        offset: 210,
-        charEnded: false
-    }
-
-    itemRefs = [];
-
-    marvelService = new MarvelService ();
     
-    getPersons = () => {
-        this.marvelService.getAllCharacters()
-        .then(
-            data=> {
-                this.setState({persons: data})
-            })
-        .catch(<ErrorMessage/>);
 
-    }
+    useEffect(()=>{            
+        onRequest();
+    }, []);
 
-    setRef = (ref) => {
-        this.itemRefs.push(ref);
-    }
+    const itemRefs = useRef([]);
+    const marvelService = new MarvelService ();
 
-    focusOnItem = (id) => {
-
-        this.itemRefs.forEach(item => item.classList.remove('char__item_selected'));
-        this.itemRefs[id].classList.add('char__item_selected');
-        this.itemRefs[id].focus();
-    }
-
-    drawCharList = () =>{
-     const result =  this.state.persons.map ((person, i)=>{      
-        
-        return (
-            <li 
-            key={person.id} 
-            ref={this.setRef}
-            className="char__item"
-            onClick={()=> {
-                this.props.onCharSelected(person.id);
-                this.focusOnItem(i);
-            }}
-            >
-                <img 
-                    src={person.thumbnail} 
-                    alt={person.name}
-                    style = {person.thumbnailStyle}
-                    />
-                <div className="char__name">{person.name}</div>
-            </li>
-         )
-     })
-        
-        return result;
-    }
-
-    componentDidMount(){
-        this.onRequest();       
-    }
-
-    onRequest = (offset) =>{
-        this.marvelService.getAllCharacters(offset)
+    const onRequest = (offset) =>{
+        marvelService.getAllCharacters(offset)
         .then(
             data=> {
                 let ended = false;
@@ -80,40 +32,74 @@ class CharList extends Component {
                     ended = true;
                 }
 
-                this.setState((state)=>({
-                    persons: [...state.persons, ...data],
-                    newPersonLoading: false,
-                    offset: state.offset + 9,
-                    charEnded: ended
-                }))
+                setPerons(persons => [...persons, ...data]);
+                setNewPersonLoading(newPersonLoading => false);
+                setOffset(offset => offset+9);
+                setCharEnded(charEnded=> ended);
             })
         .catch(<ErrorMessage/>);
+    }   
+    
+    const getPersons = () => {
+        marvelService.getAllCharacters()
+        .then(data=> setPerons(data))
+        .catch(<ErrorMessage/>);
+
     }
 
-    onCharLoading = () =>{
-        this.setState({newPersonLoading: true});
+    const focusOnItem = (id) => {
+
+        itemRefs.current.forEach(item => item.classList.remove('char__item_selected'));
+        itemRefs.current[id].classList.add('char__item_selected');
+        itemRefs.current[id].focus();
     }
 
-    render (){
-
-        const {newPersonLoading, offset, charEnded} = this.state;
-
-        return (
-            <div className="char__list">
-                <ul className="char__grid">
-                    {this.state.persons.length > 0 ? this.drawCharList() : null}
-                </ul>
-                <button 
-                className="button button__main button__long"
-                disabled={newPersonLoading}
-                style={{'display': charEnded ? 'none' : 'block'}}
-                onClick={()=>(this.onRequest(offset))}
+    const drawCharList = () =>{
+        const result =  persons.map ((person, i)=>{      
+        
+            return (
+                <li 
+                key={person.id} 
+                ref={(el)=>itemRefs.current[i] = el}
+                className="char__item"
+                onClick={()=> {
+                    props.onCharSelected(person.id);
+                    focusOnItem(i);
+                }}
                 >
-                    <div className="inner">load more</div>
-                </button>
-            </div>
-        )
+                    <img 
+                        src={person.thumbnail} 
+                        alt={person.name}
+                        style = {person.thumbnailStyle}
+                        />
+                    <div className="char__name">{person.name}</div>
+                </li>
+            )
+     })
+        
+        return result;
     }
+
+    const onCharLoading = () =>{
+        setNewPersonLoading(true);
+       
+    }
+
+    return (
+        <div className="char__list">
+            <ul className="char__grid">
+                {persons.length > 0 ? drawCharList() : null}
+            </ul>
+            <button 
+            className="button button__main button__long"
+            disabled={newPersonLoading}
+            style={{'display': charEnded ? 'none' : 'block'}}
+            onClick={()=>(onRequest(offset))}
+            >
+                <div className="inner">load more</div>
+            </button>
+        </div>
+    )
 }
 
 

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 import PropTypes from 'prop-types';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import CharInfo from '../charInfo/CharInfo';
 import ErrorMessage from '../errrorMessage/ErrorMessage';
 import './charList.scss';
@@ -10,7 +10,6 @@ import './charList.scss';
 const CharList = (props) =>{
 
     const [persons, setPerons] = useState([]);
-    const [newPersonLoading, setNewPersonLoading] = useState(false);
     const [offset, setOffset] = useState(210);
     const [charEnded, setCharEnded] = useState(false);
     
@@ -21,10 +20,10 @@ const CharList = (props) =>{
     }, []);
 
     const itemRefs = useRef([]);
-    const marvelService = new MarvelService ();
+    const {loading, error, getAllCharacters} = useMarvelService ();
 
     const onRequest = (offset) =>{
-        marvelService.getAllCharacters(offset)
+        getAllCharacters(offset)
         .then(
             data=> {
                 let ended = false;
@@ -33,19 +32,12 @@ const CharList = (props) =>{
                 }
 
                 setPerons(persons => [...persons, ...data]);
-                setNewPersonLoading(newPersonLoading => false);
                 setOffset(offset => offset+9);
-                setCharEnded(charEnded=> ended);
+                setCharEnded(ended);
             })
         .catch(<ErrorMessage/>);
     }   
-    
-    const getPersons = () => {
-        marvelService.getAllCharacters()
-        .then(data=> setPerons(data))
-        .catch(<ErrorMessage/>);
 
-    }
 
     const focusOnItem = (id) => {
 
@@ -80,10 +72,7 @@ const CharList = (props) =>{
         return result;
     }
 
-    const onCharLoading = () =>{
-        setNewPersonLoading(true);
-       
-    }
+
 
     return (
         <div className="char__list">
@@ -92,7 +81,7 @@ const CharList = (props) =>{
             </ul>
             <button 
             className="button button__main button__long"
-            disabled={newPersonLoading}
+            disabled={loading}
             style={{'display': charEnded ? 'none' : 'block'}}
             onClick={()=>(onRequest(offset))}
             >

@@ -8,6 +8,8 @@ const Page404 = lazy(()=> import('../pages/Page404')); // Динамически
 const MainPage = lazy(()=> import('../pages/MainPage'));
 const ComicsPage = lazy(()=> import('../pages/ComicsPage'));
 const SingleComicsPage = lazy(()=> import('../pages/SingleComicsPage'));
+const SingleCharacterPage = lazy(()=> import('../pages/SingleCharacterPage'));
+
 
 const App = () => {
 
@@ -21,6 +23,7 @@ const App = () => {
                         <Route path="/" element={<MainPage/>}/>  
                         <Route path="/comics" element={<ComicsPage/>} />
                         <Route path="/comics/:comicId" element={<SingleComicsPage/>} />
+                        <Route path="/charachter/:characterId" element={<SingleCharacterPage/>} />
                         <Route path='*' element={<Page404/>}/>
                     </Routes>
                 </Suspense>

@@ -1,0 +1,52 @@
+@import '../../style/variables.scss';
+
+
+.char{
+    &__search{
+        margin-top: 30px;
+        width: 425px;
+        min-height: 127px;
+        padding: 25px;
+        background: #FFFFFF;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.25);
+    }
+    &__title-search{
+        font-style: normal;
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 21px;
+
+        color: #000000;
+        &-green{
+            color: #03710E;
+        }
+    }
+
+    &__search-wrapper{
+        margin-top: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__search-input{
+    width: 250px;
+    height: 38px;
+    border: none;    
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    padding: 10px;
+    }
+
+    &__error{
+        margin-top: 25px;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 21px;
+
+        color: #9F0013;
+    }
+
+
+}

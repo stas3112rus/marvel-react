@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
+import {CSSTransition, TransitionGroup} from 'react-transition-group';
 
 import PropTypes from 'prop-types';
 import useMarvelService from '../../services/MarvelService';
 import CharInfo from '../charInfo/CharInfo';
 import ErrorMessage from '../errrorMessage/ErrorMessage';
+
 import './charList.scss';
 
 
@@ -50,22 +52,26 @@ const CharList = (props) =>{
         const result =  persons.map ((person, i)=>{      
         
             return (
-                <li 
-                key={person.id} 
-                ref={(el)=>itemRefs.current[i] = el}
-                className="char__item"
-                onClick={()=> {
-                    props.onCharSelected(person.id);
-                    focusOnItem(i);
-                }}
-                >
-                    <img 
-                        src={person.thumbnail} 
-                        alt={person.name}
-                        style = {person.thumbnailStyle}
-                        />
-                    <div className="char__name">{person.name}</div>
-                </li>
+                
+                <CSSTransition key={i} timeout={500} classNames="char__item">
+                    <li 
+                    
+                    ref={(el)=>itemRefs.current[i] = el}
+                    className="char__item"
+                    onClick={()=> {
+                        props.onCharSelected(person.id);
+                        focusOnItem(i);
+                    }}
+                    >
+                            <img 
+                                src={person.thumbnail} 
+                                alt={person.name}
+                                style = {person.thumbnailStyle}
+                                />
+                            <div className="char__name">{person.name}</div>
+                    </li>
+                </CSSTransition>
+               
             )
      })
         
@@ -77,7 +83,11 @@ const CharList = (props) =>{
     return (
         <div className="char__list">
             <ul className="char__grid">
-                {persons.length > 0 ? drawCharList() : null}
+            <TransitionGroup component={null}>
+                 {persons.length > 0 ? drawCharList() : null}
+            </TransitionGroup>
+               
+
             </ul>
             <button 
             className="button button__main button__long"

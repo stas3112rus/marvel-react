@@ -32,8 +32,7 @@ const SingleComicPage = () => {
     const content = !(loading || error || !comic) ? <View comic={comic}/> : null;
 
     return (
-        <>
-           
+        <>           
             <AppBanner/>
             {errorMessage}
             {spinner}

@@ -6,6 +6,7 @@ import useMarvelService from '../../services/MarvelService';
 import CharInfo from '../charInfo/CharInfo';
 import ErrorMessage from '../errrorMessage/ErrorMessage';
 
+
 import './charList.scss';
 
 

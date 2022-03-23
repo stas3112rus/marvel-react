@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errrorMessage/ErrorMessage';
 import useMarvelService from '../../services/MarvelService';
-
+import setContent from '../../utils/setContent';
 
 import './randomChar.scss';
 
@@ -17,7 +15,7 @@ const RandomChar = (props) => {
         updateChar()
     }, [])
    
-    const {error, loading, getCharacter, clearError} = useMarvelService ();
+    const { getCharacter, clearError, process, setProcess} = useMarvelService ();
 
     const onCharLoaded = (char) =>{     
             char['desc'] =  updateDesc(char['desc']);
@@ -39,18 +37,14 @@ const RandomChar = (props) => {
         const id = Math.floor(Math.random()*(1011400 - 1011000)+1011000);
         getCharacter(id)
         .then(onCharLoaded)
+        .then(()=>setProcess('confirmed'))
     }
         
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading ? <Spinner/> : null;
-    const content =  !( loading || error) ? <View char={char}/> : null
-       
+  
     return(
         <div className="randomchar">
 
-            {errorMessage}
-            {spinner}
-            {content}
+            { setContent(process, View, char) }
             
             <div className="randomchar__static">
                 <p className="randomchar__title">

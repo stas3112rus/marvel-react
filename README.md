@@ -1,3 +1,5 @@
 app on react
 
-I use api https://developer.marvel.com/
+I used api https://developer.marvel.com/
+
+You can at finished version of project by link https://marve7722.herokuapp.com/
